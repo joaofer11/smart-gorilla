@@ -27,6 +27,16 @@ export class UpdateUserService {
     this.#userRepository = userRepository;
   }
 
+  async #checkEmail(email: string) {
+    const isEmailAlreadyInUse = await this.#userRepository.findByEmail(email);
+
+    if (isEmailAlreadyInUse) {
+      throw new EmailIsAlreadyInUseError();
+    }
+
+    return email;
+  }
+
   async execute({
     id,
     name,
@@ -40,17 +50,9 @@ export class UpdateUserService {
       throw new ResourceNotFoundError();
     }
 
-    if (email) {
-      const isEmailAlreadyInUse = await this.#userRepository.findByEmail(email);
-
-      if (isEmailAlreadyInUse) {
-        throw new EmailIsAlreadyInUseError();
-      }
-    }
-
-    user.name = name ?? user.name;
-    user.age = age ?? user.age;
-    user.email = email ?? user.email;
+    user.name = name ? name : user.name;
+    user.age = age ? age : user.age;
+    user.email = email ? await this.#checkEmail(email) : user.email;
     user.password = password ? await hash(password, 6) : user.password;
 
     await this.#userRepository.save(user);
