@@ -12,4 +12,5 @@ export interface UserRepository {
   findById(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
   create(data: CreateUserDTO): Promise<User>;
+  save(data: User): Promise<User>;
 }
