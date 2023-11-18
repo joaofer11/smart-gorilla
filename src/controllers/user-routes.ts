@@ -16,6 +16,6 @@ export const userRoutes = async (app: FastifyInstance) => {
       return response.status(statusCode).send({ message });
     }
 
-    return response.status(201).send(data?.user);
+    return response.status(201).send(data);
   });
 };
