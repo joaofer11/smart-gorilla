@@ -31,15 +31,20 @@ export class RegisterUserController {
         password,
       });
 
+      const toClientUser = {
+        ...user,
+        password: undefined,
+      };
+
       return {
-        user,
+        user: toClientUser,
       };
     } catch (error) {
       if (error instanceof EmailIsAlreadyInUseError) {
         return {
           error: {
             message: error.message,
-            statusCode: 400,
+            statusCode: 409,
           },
         };
       }
